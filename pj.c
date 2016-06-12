@@ -779,3 +779,207 @@
         fclose(fp\n);*/
 		}
 				}	
+#include <stdio.h>
+#include <string.h>
+int main(void)
+{
+	int i=0, j=0, aaa=0, k=0, check=0, a=0,l=0,m=0, tmp = 0, h=0, d=0, s=0, sp=0, nc=0;
+	char input[1000], num[100][61], c[61];
+	char v[10][62];
+	FILE *ofp;
+
+	while (1)
+	{
+		for(i = 0; input[i-1] != '\n'; i++) 
+			input[i] = getchar(); 
+
+		input[--i] = '\0'; 
+
+		for(i=0;input[i]!='\0';++i)
+		{
+			aaa=0;
+			if(input[i]=='=')
+		   	{
+				if(((input[0]>='a'&&input[0]<='z')||(input[0]>='A'&&input[0]<='Z'))&&input[1]==' '&&input[2]=='='&&input[3]==' ') 
+				{
+					aaa=1;//=있는지 없는지 확인
+					break;
+				}
+			}
+		}
+		for(i = 0; input[i]!='\0';++i)
+			if(input[i] == '=')
+				if((input[0]>='a')&&(input[0]<='z'))//변수명에 소문자를 입력하면 대문자로 받는다.
+					input[0]-=32;
+		//수정
+		if((input[0]>='A')&&(input[0]<='Z'))
+			input[0]=input[0];
+
+
+		if(((input[0]>='A')&&(input[0]<='Z'))||((input[0]>='a')&&(input[0]<='z')))//변수를 입력하고 같은변수 확인
+			for(d=0; d<10; d++)
+				if(input[0]==v[d][0])
+					break;
+		
+		if (aaa==1)//변수 = 뒤에 숫자 이외의 값이 나오면 sp=1
+			for(i=4;input[i]!='\0';i++)
+			{
+				if(input[i]<'0'||input[i]>'9')
+					sp=1;
+			}
+
+		if(sp==1)
+			for(i=4;input[i]!='\0';i++)
+			if (input[i]!='+' || input[i]!='-' || input[i]!='*' || input[i]!='/' || input[i]!='%')
+			{
+				nc=1;
+				printf("= error\n");//연사자 없으면 에러
+				break;
+			}
+			
+	    
+		//v4랑 다른 부분
+		if(aaa==1) 
+		{
+			if(d==10)//같은 문자 없을 때
+			{
+				k=0;
+				for(i=0;input[i]!='\0';++i)
+				{
+					if(input[i]!='=' && input[i]!=' ' && sp!=1)//sp가 1이 아니면서(변수 = 뒤에 숫자이외의 값이 없으면서  =과 띄어쓰기를 제외한 숫자를 v배열에 저장
+					{
+						v[j%10][k]=input[i];
+						++k;
+					}
+				}
+				++j;	
+			}
+		
+			else if (sp!=1)//같은 문자있을 때
+			{
+				k=0;
+				for(i=0;input[i]!='\0';++i)
+				{
+					if(input[i]!='=' && input[i]!=' ') //sp 1이 아니면서(변수 = 뒤에 숫자이외의 값이 없으면서) =과 띄어쓰기를 제외한 숫자를 v배열에 저장
+					{
+						v[d][k]=input[i];//전에 입력한 값에 새로운 값 덮어씀 
+					    ++k;
+					}
+				}
+				v[d][k]='\0';//전에 입력한 값이 길이가 더 길 영우 새로입력한 값에서 끊어줌
+			}
+		}
+		
+		//수정한거
+		for (i=0;input[i]!='\0';i++)
+		if ( input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '%' )
+		{
+			if( ( ((input[i-2] >= 'A' ) && ( input[i-2] <= 'Z' )) || (( input[i-2] >= 'a' ) && ( input[i-2] <= 'z' ))) || (((input[i+2] >= 'A' ) && (input[i+2] <= 'Z'))||((input[i+2] >= 'a') && (input[i+2] <= 'z'))) )//입력에 연산자가 포함되있고 알파벳이 혼합되어 있을 때 전에 선언하지 않은 알파벳이 나오면 에러
+			{
+				s=0;
+				if ( ( (input[0] >= 'a' && input[0] <= 'z' )|| ( input[0] >= 'A' && input[0] <= 'Z' ) ) && input[1] == ' ' && input[2] == '=' && input[3] == ' ' ) //변수에 연산을 넣어 선언할 때는 선언하는 변수명을 제외한 다른 변수명이 선언되지 않은 것이면 오류
+				{
+					for(i=4;input[i]!='\0';i++)
+					{
+						for(d=0; d<10; d++)
+						{
+							if(input[i-2]!=v[d][0] && input[i+2]!=v[d][0] || input[i-2]-32!=v[d][0] && input[i+2]-32!=v[d][0])
+							{
+								s=1;
+								break;
+							}
+						}
+
+					}
+				}
+				else 
+					for(i=0;input[i]!='\0';i++)
+					{
+						for(d=0; d<10; d++)
+						{
+							if(input[i-2]!=v[d][0] && input[i+2]!=v[d][0] || input[i-2]-32!=v[d][0] && input[i+2]-32!=v[d][0])
+							{
+								s=1;
+								break;
+							}
+						}
+					}
+				if(s==0 && sp!=1)
+					printf("= error");
+			}
+		}
+		//저장확인
+		printf("input[]\n");
+		printf("%s\n",input);    
+
+		printf("v[][]\n");
+		for (i=0;i<=9;i++)
+			printf("%s\n",v[i]);
+
+		for(i=0; i<=9; ++i)
+			if(input[0]==v[i][0])
+				break;
+		
+		//VAR입력
+		if (strcmp(input,"VAR") == 0)
+		{  
+			for (tmp=0;tmp<=9;tmp++) 
+				if(v[tmp][0]!='\0')//v배열에 변수가 없을 때 까지 배열 출력
+				{
+					printf("%c = ",v[tmp][0]);
+					for(k=1;v[tmp][k]!='\0';k++)			
+						printf("%c",v[tmp][k]);
+					printf("\n");
+					if (v[tmp+1][0]=='\0')
+						break;
+				} 
+				else
+				{
+					printf("정의된 변수 없음\n");//아무것도 저장 안되있을 때
+					break;
+				}		
+		}	
+		
+		if ((input[0]>='a'&&input[0]<='z')||(input[0]>='A'&&input[0]<='Z'))
+		{		if(input[1]=='\0')//변수명만 입력시
+			{			
+				for(i=0; i<=9; ++i)
+					if (input[0]==v[i][0]||input[0]-32==v[i][0]) //입력한 변수 대소문자 구분 없이 같은 알파벳이면
+						break;
+				if (input[0] != v[i][0] && v[i][0] != input[0]-32  && strcmp(input,"VAR") != 0)//입력한 변수가 전에 입력한적 없으면 undefined /input[0]-32는 추가함
+				{
+					printf("= undefined\n");
+				}
+				else 
+				{
+						printf("= ");
+					for(tmp=1; v[i][tmp]!='\0'; ++tmp)
+						printf("%c",v[i][tmp]);
+					printf("\n");
+				}
+			}
+		}
+	
+		//띄어쓰기와 공백처리가 되고 V배열에 저장 되었을 때 결과값 출력
+		if(((input[0]>='a'&&input[0]<='z')||(input[0]>='A'&&input[0]<='Z'))&&input[1]==' '&&input[2]=='='&&input[3]==' ') 
+		{
+			if (sp!=1)
+			{
+				printf("= ");		
+				for (k = 0; v[(j-1)%10][k]!='\0';k++)
+					printf("%c", v[(j-1)%10][k+1]);
+				printf("\n");
+			}
+		}
+
+		if((input[0]>='a'&&input[0]<='z')||(input[0]>='A'&&input[0]<='Z'))//알파벳 입력시
+		{
+			if(input[1]=='\0') //알파벳 한개만 입력받았을 때 162줄
+			;
+			else if (sp!=1 && aaa==0 && strcmp(input,"VAR")!=0 && strcmp(input,"save")!=0 && strcmp(input,"load")!=0 && strcmp(input,"end")!=0 && strcmp(input,"clear")!=0)
+				printf("= error\n"); 
+		}
+        
+	}
+}
+
